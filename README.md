@@ -24,7 +24,68 @@ A service can have inputs.
 
 A service can have outputs, including the URL.
 
-A service can expose an interface.
+A service can expose an interface. An interface is the set of actions a service exposes as well as the
+schema for the expected inputs for those actions.
+
+``` yaml
+API: 0.1
+version: 1
+
+environments:
+- test
+- local
+- staging
+- prod
+
+services:
+- name: email-service
+  version: 2
+  extends: email-service@1
+  actions:
+    send_email:
+      schema:
+        to:
+          type: string
+          required: true
+          format: string/email
+          validator: validate-to.js
+        message: string
+    send_email_template:
+      schema:
+        to: string
+        template: string
+    send_bulk_email:
+        to:
+          type: array
+          item: string
+        message: string
+    send_bulk_email_template:
+        to:
+          type: array
+          item: string
+        template: string
+  deployments:
+  - environment: local
+    resource: sendgrid@v1
+    instances: 2
+    actions:
+      send_email:
+        endpoint: /send
+        data:
+          to: to
+          message: html_body
+      send_email_template:
+        endpoint: /send-template
+        data: transform1.js
+      send_bulk_email: script1.js
+      send_bulk_email_template: script2.js
+
+resources:
+- name: sendgrid
+  version: v1
+  source: https://hub.docker.com/r/sendgrid/sendgrid-python/
+  sourceType: docker
+```
 
 ### Component
 
@@ -33,8 +94,6 @@ A component is an executable package.
 A component  can be created from an HTTP server, a Docker image, a Git repo, or a local folder.
 
 A component can have persistent storage.
-
-A component can implement an interface.
 
 A component can expose a home page used to show overviews (e.g. components for logging, monitoring, and alerting)
 
