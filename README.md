@@ -53,6 +53,10 @@ If the URL cannot be obtained from the environment variable, it will be obtained
 
 A component should expose a health check endpoint.
 
+A health check system should periodically ping each service which, in turn, should ping its components.
+The result of the check should be stored and accessible via a dashboard. Additionally, failing checks
+should result in retries/restarts and/or alerts/alarms.
+
 ## Rerences
 
 - https://kubernetes.io/docs/home/
