@@ -67,7 +67,10 @@ services:
   deployments:
   - environment: local
     resource: sendgrid@v1
-    instances: 2
+    mechanism: docker-compose
+    instances:
+      min: 1
+      max: 3
     actions:
       send_email:
         endpoint: /send
@@ -79,12 +82,20 @@ services:
         data: transform1.js
       send_bulk_email: script1.js
       send_bulk_email_template: script2.js
+  - environment: prod
+    resource: sendgrid-server@v1
 
 resources:
 - name: sendgrid
   version: v1
   source: https://hub.docker.com/r/sendgrid/sendgrid-python/
-  sourceType: docker
+  sourceType: docker-image
+  healthCheck: /healthcheck
+- name: sendgrid-server
+  version: v1
+  source: https://my-sendgrid-server.com
+  sourceType: http-server
+  healthCheck: /health
 ```
 
 ### Component
