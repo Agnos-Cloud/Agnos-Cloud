@@ -12,6 +12,8 @@ cloud service providers.
 
 The actual work in a service is done by a component.
 
+A service may run multiple instances of a component to handle traffic spikes. This also implies that a service has a built-in load balancer.
+
 A service can have different components for different environments.
 
 A service can have different environment variables for different environments.
@@ -30,7 +32,11 @@ A component is an executable package.
 
 A component  can be created from an HTTP server, a Docker image, a Git repo, or a local folder.
 
-A component can implement an interface
+A component can have persistent storage.
+
+A component can implement an interface.
+
+A component can expose a home page used to show overviews (e.g. components for logging, monitoring, and alerting)
 
 ### Referencing a Service
 
@@ -49,6 +55,10 @@ const serviceB = await services.getUrl('ServiceB');
 
 If the URL cannot be obtained from the environment variable, it will be obtained from the Agnos Cloud server.
 
+### Actions/Messages
+
+### Events/Messages
+
 ## Health Checks
 
 A component should expose a health check endpoint.
@@ -60,4 +70,4 @@ should result in retries/restarts and/or alerts/alarms.
 ## Rerences
 
 - https://kubernetes.io/docs/home/
-  - https://kubernetes.io/docs/concepts/overview/#why-you-need-kubernetes-and-what-can-it-do
+  - [https://kubernetes.io/docs/concepts/overview/#why-you-need-kubernetes-and-what-can-it-do](https://kubernetes.io/docs/concepts/overview/working-with-objects/object-management/)
