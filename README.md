@@ -55,9 +55,114 @@ const serviceB = await services.getUrl('ServiceB');
 
 If the URL cannot be obtained from the environment variable, it will be obtained from the Agnos Cloud server.
 
-### Actions/Messages
+### Actions
 
-### Events/Messages
+An action is a message sent from one service to another. It is synchronous, meaning the response to the action is expected
+in the same request-response cycle.
+
+``` js
+import { ActionDispatcher } from '@agnos-cloud/core';
+
+const dispatcher = new ActionDispatcher();
+const response = await dispatcher.dispatch({
+  name: 'SEND_EMAIL',
+  data: {
+    to: 'example@email.com',
+    message: 'Hello World!',
+  },
+});
+```
+
+Agnos will determine the right service to which an action is to be dispatched; if no service is found an error should be returned or thrown.
+
+It should be possible to specify the name of a service to which the action must be sent.
+
+``` js
+import { ActionDispatcher } from '@agnos-cloud/core';
+
+const dispatcher = new ActionDispatcher();
+const response = await dispatcher.dispatch({
+  name: 'SEND_EMAIL',
+  target: 'EMAIL_SERVICE',
+  data: {
+    to: 'example@email.com',
+    message: 'Hello World!',
+  },
+});
+```
+
+The receiving service will receive an object that looks like the dispatched action, plus a `source` field signifying the originating service.
+
+``` js
+{
+  name: 'SEND_EMAIL',
+  source: 'ORDER_SERVICE',
+  target: 'EMAIL_SERVICE',
+  data: {
+    to: 'example@email.com',
+    message: 'Hello World!',
+  },
+}
+```
+
+### Events
+
+An event is a message that signifies an occurrence. An event is broadcast to all services that have subscribed to that event.
+The response object can be used to check how many services have received (and acknowledged) the event.
+
+``` js
+import { EventDispatcher } from '@agnos-cloud/core';
+
+const dispatcher = new EventDispatcher();
+const response = await dispatcher.dispatch({
+  name: 'EMAIL_SENT',
+  data: {
+    id: 123,
+    to: 'example@email.com',
+    message: 'Hello World!',
+  },
+});
+
+// how many services have received the event
+const received = await response.getReceivedServices().length;
+
+// how many services have acknowledged the event
+const received = await response.getAcknowledgedServices().length;
+```
+
+Agnos will dispatch the event to all appropriate services; if no service is found no error is thrown or returned.
+
+It should be possible to specify the name of a service to which the event must be sent.
+
+``` js
+import { EventDispatcher } from '@agnos-cloud/core';
+
+const dispatcher = new EventDispatcher();
+const response = await dispatcher.dispatch({
+  name: 'EMAIL_SENT',
+  target: 'EMAIL_SERVICE',
+  data: {
+    id: 123,
+    to: 'example@email.com',
+    message: 'Hello World!',
+  },
+});
+```
+
+The receiving service will receive an object that looks like the dispatched event, plus a `source` field signifying the originating service.
+
+``` js
+{
+  name: 'EMAIL_SENT',
+  source: 'ORDER_SERVICE',
+  target: 'EMAIL_SERVICE',
+  data: {
+    id: 123,
+    to: 'example@email.com',
+    message: 'Hello World!',
+  },
+}
+```
 
 ## Health Checks
 
