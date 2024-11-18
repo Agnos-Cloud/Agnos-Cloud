@@ -49,6 +49,10 @@ const serviceB = await services.getUrl('ServiceB');
 
 If the URL cannot be obtained from the environment variable, it will be obtained from the Agnos Cloud server.
 
+## Health Checks
+
+A component should expose a health check endpoint.
+
 ## Rerences
 
 - https://kubernetes.io/docs/home/
