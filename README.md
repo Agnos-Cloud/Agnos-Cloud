@@ -70,4 +70,4 @@ should result in retries/restarts and/or alerts/alarms.
 ## Rerences
 
 - https://kubernetes.io/docs/home/
-  - [https://kubernetes.io/docs/concepts/overview/#why-you-need-kubernetes-and-what-can-it-do](https://kubernetes.io/docs/concepts/overview/working-with-objects/object-management/)
+  - [https://kubernetes.io/docs/concepts/overview/working-with-objects/object-management/
