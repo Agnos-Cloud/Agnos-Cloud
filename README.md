@@ -80,51 +80,6 @@ services:
     emails_sent_per_month:
       type: number
       update_frequency: monthly
-
-resources:
-- name: sendgrid
-  version: v1
-  source: https://hub.docker.com/r/sendgrid/sendgrid-python/
-  sourceType: docker-image
-  healthCheck: /healthcheck
-- name: sendgrid-server
-  version: v1
-  source: https://my-sendgrid-server.com
-  sourceType: http-server
-  healthCheck: /health
-
-deployments:
-- name: deploy-email-local
-  environment: local
-  service: email-service@2
-  resource: sendgrid@v1
-  platform:
-    name: docker-compose
-    mem: 256
-    cpu: 512
-  ports:
-  - container: 3000
-    host: 3000
-  scale:
-    min: 1
-    max: 3
-    trigger:
-      cpu: "70%"
-  actions:
-    send_email:
-      endpoint: /send
-      data:
-        to: to
-        message: html_body
-    send_email_template:
-      endpoint: /send-template
-      data: transform1.js
-    send_bulk_email: script1.js
-    send_bulk_email_template: script2.js
-- name: deploy-email-prod
-  environment: prod
-  service: email-service@2
-  resource: sendgrid-server@v1
 ```
 
 ### Resource
@@ -174,7 +129,7 @@ deployments:
   service: email-service@2
   resource: sendgrid@v1
   platform:
-    type: docker-compose
+    name: docker-compose
     mem: 256
     cpu: 512
   ports:
