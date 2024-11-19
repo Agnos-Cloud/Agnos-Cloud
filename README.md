@@ -99,7 +99,7 @@ deployments:
   service: email-service@2
   resource: sendgrid@v1
   platform:
-    type: docker-compose
+    name: docker-compose
     mem: 256
     cpu: 512
   ports:
