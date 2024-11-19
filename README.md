@@ -86,7 +86,7 @@ services:
 
 A resource is an executable package.
 
-A resource  can be created from an HTTP server, a Docker image, a Git repo, or a local folder.
+A resource  can be created from an HTTP server, a Docker image, a config file, a Git repo, or a local folder.
 
 A resource runs in a service and can be accessed via that service.
 
