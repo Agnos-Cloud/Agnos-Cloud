@@ -352,3 +352,5 @@ By reusing items from the marketplace we will be able to build robust applicatio
 
 - https://kubernetes.io/docs/home/
   - https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+- https://developer.hashicorp.com
+  - https://developer.hashicorp.com/terraform/language/stacks
