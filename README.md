@@ -6,19 +6,17 @@ A cloud-agnostic platform for designing, deploying, and managing micro-services.
 
 ### Service
 
-A service is a logical representation of a microservice in a manner that does not change based on the host machine or environment.
-In other words, the way you programmatically interact with a service should remain the same even across different deployment environments or
-cloud service providers.
+A service is a logical representation of a microservice.
 
-The actual work in a service is done by a component.
+A service is a wrapper around resources (typically servers) that do the actual work of handling requests coming to the service.
 
-A service may run multiple instances of a component to handle traffic spikes. This also implies that a service has a built-in load balancer.
+A service has a name with which it can always be referenced regardless of where its resources are located.
 
-A service can have different components for different environments.
+A service may run multiple instances of a resource to handle traffic spikes, which implies that it has a built-in load balancer.
 
-A service can have different environment variables for different environments.
+A service can have different resources for different environments.
 
-A service has a name with which it can always be referenced.
+A service can have different environment variables for various environments.
 
 A service can have inputs.
 
@@ -26,6 +24,8 @@ A service can have outputs, including the URL.
 
 A service can expose an interface. An interface is the set of actions a service exposes as well as the
 schema for the expected inputs for those actions.
+
+A service can have persistent storage so that data written to such storage persists across restarts.
 
 ``` yaml
 API: 0.1
@@ -41,6 +41,9 @@ services:
 - name: email-service
   version: 2
   extends: email-service@1
+  dependsOn:
+  - service-a
+  - service-b
   actions:
     send_email:
       schema:
@@ -64,26 +67,79 @@ services:
           type: array
           item: string
         template: string
-  deployments:
-  - environment: local
-    resource: sendgrid@v1
-    mechanism: docker-compose
-    instances:
-      min: 1
-      max: 3
-    actions:
-      send_email:
-        endpoint: /send
-        data:
-          to: to
-          message: html_body
-      send_email_template:
-        endpoint: /send-template
-        data: transform1.js
-      send_bulk_email: script1.js
-      send_bulk_email_template: script2.js
-  - environment: prod
-    resource: sendgrid-server@v1
+  inputs:
+    from_email_template: string
+    service_a_url:
+      type: string
+      value:
+        from: ${service-a.url}
+  outputs:
+    url: string
+    smtp_server: string
+  metrics:
+    emails_sent_per_month:
+      type: number
+      update_frequency: monthly
+
+resources:
+- name: sendgrid
+  version: v1
+  source: https://hub.docker.com/r/sendgrid/sendgrid-python/
+  sourceType: docker-image
+  healthCheck: /healthcheck
+- name: sendgrid-server
+  version: v1
+  source: https://my-sendgrid-server.com
+  sourceType: http-server
+  healthCheck: /health
+
+deployments:
+- name: deploy-email-local
+  environment: local
+  service: email-service@2
+  resource: sendgrid@v1
+  platform:
+    type: docker-compose
+    mem: 256
+    cpu: 512
+  ports:
+  - container: 3000
+    host: 3000
+  scale:
+    min: 1
+    max: 3
+    trigger:
+      cpu: "70%"
+  actions:
+    send_email:
+      endpoint: /send
+      data:
+        to: to
+        message: html_body
+    send_email_template:
+      endpoint: /send-template
+      data: transform1.js
+    send_bulk_email: script1.js
+    send_bulk_email_template: script2.js
+- name: deploy-email-prod
+  environment: prod
+  service: email-service@2
+  resource: sendgrid-server@v1
+```
+
+### Resource
+
+A resource is an executable package.
+
+A resource  can be created from an HTTP server, a Docker image, a Git repo, or a local folder.
+
+A resource runs in a service and can be accessed via that service.
+
+A resource can save data to the persistent storage of its service.
+
+``` yaml
+API: 0.1
+version: 1
 
 resources:
 - name: sendgrid
@@ -98,15 +154,59 @@ resources:
   healthCheck: /health
 ```
 
-### Component
+### Deployment
 
-A component is an executable package.
+A deployment creates a runtime environment, deploys a resource to that environment, and makes the resource accessible via its service.
 
-A component  can be created from an HTTP server, a Docker image, a Git repo, or a local folder.
+``` yaml
+API: 0.1
+version: 1
 
-A component can have persistent storage.
+environments:
+- test
+- local
+- staging
+- prod
 
-A component can expose a home page used to show overviews (e.g. components for logging, monitoring, and alerting)
+deployments:
+- name: deploy-email-local
+  environment: local
+  service: email-service@2
+  resource: sendgrid@v1
+  platform:
+    type: docker-compose
+    mem: 256
+    cpu: 512
+  ports:
+  - container: 3000
+    host: 3000
+  scale:
+    min: 1
+    max: 3
+    trigger:
+      cpu: "70%"
+  actions:
+    send_email:
+      endpoint: /send
+      data:
+        to: to
+        message: html_body
+    send_email_template:
+      endpoint: /send-template
+      data: transform1.js
+    send_bulk_email: script1.js
+    send_bulk_email_template: script2.js
+- name: deploy-email-prod
+  environment: prod
+  service: email-service@2
+  resource: sendgrid-server@v1
+```
+
+### Deployment Platform
+
+Developers should be able to create custom deployment platforms.
+
+To create a deployment platform, register an HTTP server we can call at various lifecycles of the deployment.
 
 ### Referencing a Service
 
@@ -242,7 +342,13 @@ A health check system should periodically ping each service which, in turn, shou
 The result of the check should be stored and accessible via a dashboard. Additionally, failing checks
 should result in retries/restarts and/or alerts/alarms.
 
+## Marketplace
+
+There will be a marketplace where developers can share services, resources, and deployments.
+
+By reusing items from the marketplace we will be able to build robust applications in record time.
+
 ## Rerences
 
 - https://kubernetes.io/docs/home/
-  - [https://kubernetes.io/docs/concepts/overview/working-with-objects/object-management/
+  - https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
