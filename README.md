@@ -82,6 +82,14 @@ services:
       update_frequency: monthly
 ```
 
+It should be possible to have a flow chat of services showing their inter-dependencies, similar to what is shown below.
+
+![Screenshot 2024-11-22 at 13 03 01](https://github.com/user-attachments/assets/50feb2b6-3b26-4432-9fab-3dfb0cb7b07f)
+
+![Screenshot 2024-11-22 at 13 06 31](https://github.com/user-attachments/assets/3b7300c2-f624-4d8e-872b-5c402a7b3452)
+
+
+
 ### Resource
 
 A resource is an executable package.
@@ -308,4 +316,6 @@ By reusing items from the marketplace we will be able to build robust applicatio
 - https://kubernetes.io/docs/home/
   - https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 - https://developer.hashicorp.com
-  - https://developer.hashicorp.com/terraform/language/stacks
+  - https://developer.hashicorp.com/terraform/language/stacks/use-cases
+- https://developer.hashicorp.com/terraform/tutorials/configuration-language
+- https://developer.hashicorp.com/terraform/tutorials/aws-get-started
