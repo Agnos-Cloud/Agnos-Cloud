@@ -34,8 +34,6 @@ version: 1
 services:
 - name: email-service
   version: 2
-  extends: email-service@1
-  template: @agnos/email-service
   dependsOn:
   - service-a
   - service-b
