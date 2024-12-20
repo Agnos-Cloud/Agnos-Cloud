@@ -2,6 +2,11 @@
 
 A cloud-agnostic platform for designing, deploying, and managing micro-services.
 
+Something like https://railway.com/
+
+![Screenshot 2024-12-20 at 23 20 37](https://github.com/user-attachments/assets/8dedc60d-5294-4f3e-bc5c-e14a0ca1df72)
+
+
 ## Key Concepts
 
 ### Service
