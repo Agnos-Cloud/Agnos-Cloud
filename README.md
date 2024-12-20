@@ -186,7 +186,7 @@ You can also reference a service directly using the SDK + auto-generated code.
 import agnos from '...auto-generated-folder';
 
 // to get a service
-const emailService = agnos.services.emailService;
+const emailService = agnos.emailService;
 
 // to get an output variable
 console.log(emailService.url);
@@ -215,8 +215,7 @@ const response = await dispatcher.dispatch({
 
 import agnos from '...auto-generated-folder';
 
-const emailService = agnos.services.emailService;
-await emailService.sendEmail({
+await agnos.emailService.sendEmail({
     to: 'example@email.com',
     message: 'Hello World!',
   });
