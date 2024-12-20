@@ -15,17 +15,12 @@ A service is a logical representation of a microservice.
 
 A service is a wrapper around resources (typically servers) that do the actual work of handling requests coming to the service.
 
-A service has a name with which it can always be referenced regardless of where its resources are located.
+A service has a name with which it can always be referenced regardless of where its resources are located. _Make rules for legitimate names._
+The service name must be unique within the _application_.
 
-A service may run multiple instances of a resource to handle traffic spikes, which implies that it has a built-in load balancer.
+A service can have input variables.
 
-A service can have different resources for different environments.
-
-A service can have different environment variables for various environments.
-
-A service can have inputs.
-
-A service can have outputs, including the URL.
+A service can have output variables, including the `url` output which defaults to _<SERVICE NAME>_URL_.
 
 A service can expose an interface. An interface is the set of actions a service exposes as well as the
 schema for the expected inputs for those actions.
@@ -36,16 +31,11 @@ A service can have persistent storage so that data written to such storage persi
 API: 0.1
 version: 1
 
-environments:
-- test
-- local
-- staging
-- prod
-
 services:
 - name: email-service
   version: 2
   extends: email-service@1
+  template: @agnos/email-service
   dependsOn:
   - service-a
   - service-b
@@ -86,12 +76,6 @@ services:
       type: number
       update_frequency: monthly
 ```
-
-It should be possible to have a flow chat of services showing their inter-dependencies, similar to what is shown below.
-
-![Screenshot 2024-11-22 at 13 03 01](https://github.com/user-attachments/assets/50feb2b6-3b26-4432-9fab-3dfb0cb7b07f)
-
-![Screenshot 2024-11-22 at 13 06 31](https://github.com/user-attachments/assets/3b7300c2-f624-4d8e-872b-5c402a7b3452)
 
 
 
@@ -164,11 +148,20 @@ deployments:
       data: transform1.js
     send_bulk_email: script1.js
     send_bulk_email_template: script2.js
+  env:
+    A: "a"
+    B: ${secret.B}
 - name: deploy-email-prod
   environment: prod
   service: email-service@2
   resource: sendgrid-server@v1
 ```
+
+It should be possible to have a flow chat of services showing their inter-dependencies, similar to what is shown below.
+
+![Screenshot 2024-11-22 at 13 03 01](https://github.com/user-attachments/assets/50feb2b6-3b26-4432-9fab-3dfb0cb7b07f)
+
+![Screenshot 2024-11-22 at 13 06 31](https://github.com/user-attachments/assets/3b7300c2-f624-4d8e-872b-5c402a7b3452)
 
 ### Deployment Platform
 
@@ -182,23 +175,34 @@ A service, ServiceA, can reference another service, ServiceB (as long as there's
 During deployment, ServiceB will be deployed before ServiceA, and the URL of ServiceB will be an environment
 variable for ServiceA.
 
-You can also reference a service directly using the SDK.
+You can also reference a service directly using the SDK + auto-generated code.
 
 
 ``` js
-import services from '@agnos-cloud/services';
+// import services from '@agnos-cloud/services';
 
-const serviceB = await services.getUrl('ServiceB');
+// const serviceB = await services.getUrl('ServiceB');
+
+// =========
+
+import agnos from '...auto-generated-folder';
+
+// to get a service
+const emailService = agnos.services.emailService;
+
+// to get an output variable
+console.log(emailService.url);
 ```
-
-If the URL cannot be obtained from the environment variable, it will be obtained from the Agnos Cloud server.
 
 ### Actions
 
 An action is a message sent from one service to another. It is synchronous, meaning the response to the action is expected
 in the same request-response cycle.
 
+Code that _maps_ service actions to resource endpoints is downloaded during code generation.
+
 ``` js
+/*
 import { ActionDispatcher } from '@agnos-cloud/core';
 
 const dispatcher = new ActionDispatcher();
@@ -209,6 +213,15 @@ const response = await dispatcher.dispatch({
     message: 'Hello World!',
   },
 });
+*/
+
+import agnos from '...auto-generated-folder';
+
+const emailService = agnos.services.emailService;
+await emailService.sendEmail({
+    to: 'example@email.com',
+    message: 'Hello World!',
+  });
 ```
 
 Agnos will determine the right service to which an action is to be dispatched; if no service is found an error should be returned or thrown.
