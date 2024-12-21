@@ -20,7 +20,7 @@ The service name must be unique within the _application_.
 
 A service can have input variables.
 
-A service can have output variables, including the `url` output which defaults to _<SERVICE NAME>_URL_.
+A service can have output variables, including the `url` output which defaults to _&lt;SERVICE NAME&gt;_URL_.
 
 A service can expose an interface. An interface is the set of actions a service exposes as well as the
 schema for the expected inputs for those actions.
