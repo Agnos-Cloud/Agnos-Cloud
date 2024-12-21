@@ -20,10 +20,9 @@ The service name must be unique within the _application_.
 
 A service can have input variables.
 
-A service can have output variables, including the `url` output which defaults to _&lt;SERVICE NAME&gt;_URL_.
+A service can have output variables, including the `url` output which defaults to <i>&lt;SERVICE NAME&gt;_URL</i>.
 
-A service can expose an interface. An interface is the set of actions a service exposes as well as the
-schema for the expected inputs for those actions.
+A service can have actions.
 
 A service can have persistent storage so that data written to such storage persists across restarts.
 
@@ -34,9 +33,6 @@ version: 1
 services:
 - name: email-service
   version: 2
-  dependsOn:
-  - service-a
-  - service-b
   actions:
     send_email:
       schema:
@@ -79,11 +75,11 @@ services:
 
 ### Resource
 
-A resource is an executable package.
+A resource is a deployable and/or executable package.
 
 A resource  can be created from an HTTP server, a Docker image, a config file, a Git repo, or a local folder.
 
-A resource runs in a service and can be accessed via that service.
+A resource is the _implementation_ of a service in an environment.
 
 A resource can save data to the persistent storage of its service.
 
@@ -102,31 +98,31 @@ resources:
   source: https://my-sendgrid-server.com
   sourceType: http-server
   healthCheck: /health
+  metrics: ???
 ```
 
-### Deployment
+### Component
 
-A deployment creates a runtime environment, deploys a resource to that environment, and makes the resource accessible via its service.
+A component represents a specific _implementation_ of a service in an environment. That implementation is represented by a resource.
+In other words, a component specifies what resource a service will be deployed within an environment.
 
 ``` yaml
 API: 0.1
 version: 1
 
-environments:
-- test
-- local
-- staging
-- prod
-
-deployments:
-- name: deploy-email-local
-  environment: local
+components:
+- name: email-aws
   service: email-service@2
   resource: sendgrid@v1
+  environment: aws
+  # dependsOn:
+  # - instance-a
+  # - instance-b
   platform:
-    name: docker-compose
-    mem: 256
-    cpu: 512
+    name: aws-ecs
+    specs:
+      mem: 256
+      cpu: 512
   ports:
   - container: 3000
     host: 3000
@@ -155,11 +151,24 @@ deployments:
   resource: sendgrid-server@v1
 ```
 
-It should be possible to have a flow chat of services showing their inter-dependencies, similar to what is shown below.
+### System Design
+
+It should be possible to have a flow chat of instances showing their inter-dependencies, similar to what is shown below.
 
 ![Screenshot 2024-11-22 at 13 03 01](https://github.com/user-attachments/assets/50feb2b6-3b26-4432-9fab-3dfb0cb7b07f)
 
 ![Screenshot 2024-11-22 at 13 06 31](https://github.com/user-attachments/assets/3b7300c2-f624-4d8e-872b-5c402a7b3452)
+
+You can _download_ from a design. Download types will be extensible, with pre-installed
+ones being image files, Docker Compose, Terraform, and K8s.
+
+You can create an actual deployment from a design.
+
+### Deployment
+
+A deployment creates a runtime environment, deploys a resource to that environment, and makes the resource accessible via its service.
+
+You can choose to deploy all the instances in an environment 
 
 ### Deployment Platform
 
