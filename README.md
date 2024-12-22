@@ -268,6 +268,7 @@ An event is a message that signifies an occurrence. An event is broadcast to all
 The response object can be used to check how many services have received (and acknowledged) the event.
 
 ``` js
+/*
 import { EventDispatcher } from '@agnos-cloud/core';
 
 const dispatcher = new EventDispatcher();
@@ -285,6 +286,16 @@ const received = await response.getReceivedServices().length;
 
 // how many services have acknowledged the event
 const received = await response.getAcknowledgedServices().length;
+*/
+
+// To publish an event....
+
+// To listen for events...
+import agnos from '...auto-generated-folder';
+
+agnos.emailService.on('EMAIL_SENT', (event) => {
+  console.log(event);
+});
 ```
 
 Agnos will dispatch the event to all appropriate services; if no service is found no error is thrown or returned.
