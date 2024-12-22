@@ -104,7 +104,7 @@ resources:
 ### Component
 
 A component represents a specific _implementation_ of a service in an environment. That implementation is represented by a resource.
-In other words, a component specifies what resource a service will be deployed within an environment.
+In other words, a component specifies what resource a service will be deployed with within an environment.
 
 ``` yaml
 API: 0.1
@@ -168,13 +168,20 @@ You can create an actual deployment from a design.
 
 A deployment creates a runtime environment, deploys a resource to that environment, and makes the resource accessible via its service.
 
-You can choose to deploy all the instances in an environment 
+You can choose to deploy all the components in an environment or just a single component.
 
 ### Deployment Platform
 
 Developers should be able to create custom deployment platforms.
 
 To create a deployment platform, register an HTTP server we can call at various lifecycles of the deployment.
+
+The server will be able to report deployment progress/feedback back to us by calling our API endpoints. These progress/feedback
+reports will be relayed to the front-end in real-time.
+
+The server will also be able to write output variables for this instance of the component.
+
+AWS deployment platforms can make use of the CDK: https://aws.amazon.com/cdk/resources/
 
 ### Referencing a Service
 
