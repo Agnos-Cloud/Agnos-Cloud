@@ -361,3 +361,7 @@ By reusing items from the marketplace we will be able to build robust applicatio
   - https://developer.hashicorp.com/terraform/language/stacks/use-cases
 - https://developer.hashicorp.com/terraform/tutorials/configuration-language
 - https://developer.hashicorp.com/terraform/tutorials/aws-get-started
+
+## List of Services to Build
+
+- https://dev.to/inspiratory/how-much-does-it-cost-to-build-and-run-a-profitable-side-project-1c6c
