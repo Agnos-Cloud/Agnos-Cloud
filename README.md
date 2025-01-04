@@ -365,3 +365,5 @@ By reusing items from the marketplace we will be able to build robust applicatio
 ## List of Services to Build
 
 - https://dev.to/inspiratory/how-much-does-it-cost-to-build-and-run-a-profitable-side-project-1c6c
+- Pub/Sub
+- Prometheus, Grafana, Loki, and Tempo for observability.
